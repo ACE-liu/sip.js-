@@ -1,0 +1,253 @@
+INVITE sip:1013@121.40.242.234:5061 SIP/2.0
+
+Via: SIP/2.0/WS 121.40.242.234;branch=z9hG4bK9092619
+
+To: <sip:1013@121.40.242.234:5061>
+
+From: "1010" <sip:1010@121.40.242.234:5061>;tag=pj6fgjd4th
+
+CSeq: 2 INVITE
+
+Call-ID: tm00utmbu2jiaboc4893
+
+Max-Forwards: 70
+
+Proxy-Authorization: Digest algorithm=MD5, username="1010", realm="121.40.242.234", nonce="7289d9a3-a3f2-478c-86fd-238e92aaa14b", uri="sip:1013@121.40.242.234:5061", response="9bc5bdcbf6ac2364146df36767ef14d7", qop=auth, cnonce="dghtalv2qu4l", nc=00000001
+
+Contact: <sip:1cm7ond6@121.40.242.234;transport=wss;ob>
+
+Allow: ACK,CANCEL,INVITE,MESSAGE,BYE,OPTIONS,INFO,NOTIFY,REFER
+
+Supported: outbound
+
+User-Agent: myAwesomeApp
+
+Content-Type: application/sdp
+
+Content-Length: 1318
+
+
+
+v=0
+
+o=mozilla...THIS_IS_SDPARTA-70.0.1 3634200104653783444 0 IN IP4 0.0.0.0
+
+s=-
+
+t=0 0
+
+a=sendrecv
+
+a=fingerprint:sha-256 FA:D4:B0:5E:14:53:A9:70:B7:D1:85:AE:AD:DA:02:F4:A6:FC:A3:AA:1B:0E:DC:04:D1:6E:AE:AE:11:B3:C6:45
+
+a=group:BUNDLE 0
+
+a=ice-options:trickle
+
+a=msid-semantic:WMS *
+
+m=audio 63715 UDP/TLS/RTP/SAVPF 109 9 0 8 101
+
+c=IN IP4 192.168.58.60
+
+a=candidate:0 1 UDP 2122252543 192.168.58.60 63715 typ host
+
+a=candidate:1 1 TCP 2105524479 192.168.58.60 9 typ host tcptype active
+
+a=candidate:0 2 UDP 2122252542 192.168.58.60 63716 typ host
+
+a=candidate:1 2 TCP 2105524478 192.168.58.60 9 typ host tcptype active
+
+a=sendrecv
+
+a=end-of-candidates
+
+a=extmap:1 urn:ietf:params:rtp-hdrext:ssrc-audio-level
+
+a=extmap:2/recvonly urn:ietf:params:rtp-hdrext:csrc-audio-level
+
+a=extmap:3 urn:ietf:params:rtp-hdrext:sdes:mid
+
+a=fmtp:109 maxplaybackrate=48000;stereo=1;useinbandfec=1
+
+a=fmtp:101 0-15
+
+a=ice-pwd:aae16ff5771b6d5182fcb1167784d24d
+
+a=ice-ufrag:a07e00ab
+
+a=mid:0
+
+a=msid:{de3e47ef-535a-43f4-ad60-58fd763917a7} {5dd51edb-6a9a-40cc-bda1-4ee812632881}
+
+a=rtcp:63716 IN IP4 192.168.58.60
+
+a=rtcp-mux
+
+a=rtpmap:109 opus/48000/2
+
+a=rtpmap:9 G722/8000/1
+
+a=rtpmap:0 PCMU/8000
+
+a=rtpmap:8 PCMA/8000
+
+a=rtpmap:101 telephone-event/8000
+
+a=setup:actpass
+
+a=ssrc:1472880677 cname:{4c2f2893-e53a-49cb-8421-3d779dbc383c}
+
+
+sip-0.15.8.js:10299:25
+Wed Dec 04 2019 11:39:59 GMT+0800 (中国标准时间) | sip.transaction.ict | z9hG4bK4525142 | Timer D expired for INVITE client transaction z9hG4bK4525142. sip-0.15.8.js:10303:25
+Wed Dec 04 2019 11:39:59 GMT+0800 (中国标准时间) | sip.transaction.ict | z9hG4bK4525142 | Destroyed INVITE client transaction with id z9hG4bK4525142. sip-0.15.8.js:10303:25
+Wed Dec 04 2019 11:39:59 GMT+0800 (中国标准时间) | sip.transaction.ict | z9hG4bK4525142 | State change to "Terminated" on INVITE client transaction with id z9hG4bK4525142. sip-0.15.8.js:10303:25
+Wed Dec 04 2019 11:40:00 GMT+0800 (中国标准时间) | sip.transport | received WebSocket text message:
+
+SIP/2.0 100 Trying
+
+Via: SIP/2.0/WS 121.40.242.234;branch=z9hG4bK9092619;received=221.6.47.187;rport=3996
+
+From: "1010" <sip:1010@121.40.242.234:5061>;tag=pj6fgjd4th
+
+To: <sip:1013@121.40.242.234:5061>
+
+Call-ID: tm00utmbu2jiaboc4893
+
+CSeq: 2 INVITE
+
+User-Agent: FreeSWITCH-mod_sofia/1.10.1-release~64bit
+
+Content-Length: 0
+
+
+
+
+sip-0.15.8.js:10299:25
+Wed Dec 04 2019 11:40:00 GMT+0800 (中国标准时间) | sip.transaction.ict | z9hG4bK9092619 | State change to "Proceeding" on INVITE client transaction with id z9hG4bK9092619. sip-0.15.8.js:10303:25
+Wed Dec 04 2019 11:40:05 GMT+0800 (中国标准时间) | sip.transport | received WebSocket text message:
+
+SIP/2.0 180 Ringing
+
+Via: SIP/2.0/WS 121.40.242.234;branch=z9hG4bK9092619;received=221.6.47.187;rport=3996
+
+From: "1010" <sip:1010@121.40.242.234:5061>;tag=pj6fgjd4th
+
+To: <sip:1013@121.40.242.234:5061>;tag=m4trcFUZ60cSH
+
+Call-ID: tm00utmbu2jiaboc4893
+
+CSeq: 2 INVITE
+
+Contact: <sip:1013@121.40.242.234:5061;transport=udp>
+
+User-Agent: FreeSWITCH-mod_sofia/1.10.1-release~64bit
+
+Accept: application/sdp
+
+Allow: INVITE, ACK, BYE, CANCEL, OPTIONS, MESSAGE, INFO, UPDATE, REGISTER, REFER, NOTIFY, PUBLISH, SUBSCRIBE
+
+Supported: timer, path, replaces
+
+Allow-Events: talk, hold, conference, presence, as-feature-event, dialog, line-seize, call-info, sla, include-session-description, presence.winfo, message-summary, refer
+
+Content-Length: 0
+
+Remote-Party-ID: "Outbound Call" <sip:1013@121.40.242.234>;party=calling;privacy=off;screen=no
+
+
+
+
+sip-0.15.8.js:10299:25
+Wed Dec 04 2019 11:40:05 GMT+0800 (中国标准时间) | sip.invite-dialog | INVITE dialog tm00utmbu2jiaboc4893pj6fgjd4thm4trcFUZ60cSH constructed sip-0.15.8.js:10299:25
+Wed Dec 04 2019 11:40:08 GMT+0800 (中国标准时间) | sip.transport | received WebSocket text message:
+
+SIP/2.0 200 OK
+
+Via: SIP/2.0/WS 121.40.242.234;branch=z9hG4bK9092619;received=221.6.47.187;rport=3996
+
+From: "1010" <sip:1010@121.40.242.234:5061>;tag=pj6fgjd4th
+
+To: <sip:1013@121.40.242.234:5061>;tag=m4trcFUZ60cSH
+
+Call-ID: tm00utmbu2jiaboc4893
+
+CSeq: 2 INVITE
+
+Contact: <sip:1013@121.40.242.234:5061;transport=udp>
+
+User-Agent: FreeSWITCH-mod_sofia/1.10.1-release~64bit
+
+Allow: INVITE, ACK, BYE, CANCEL, OPTIONS, MESSAGE, INFO, UPDATE, REGISTER, REFER, NOTIFY, PUBLISH, SUBSCRIBE
+
+Supported: timer, path, replaces
+
+Allow-Events: talk, hold, conference, presence, as-feature-event, dialog, line-seize, call-info, sla, include-session-description, presence.winfo, message-summary, refer
+
+Content-Type: application/sdp
+
+Content-Disposition: session
+
+Content-Length: 568
+
+Remote-Party-ID: "Outbound Call" <sip:1013@121.40.242.234>;party=calling;privacy=off;screen=no
+
+
+
+v=0
+
+o=1013 2370 2173 IN IP4 192.168.59.209
+
+s=Talk
+
+c=IN IP4 192.168.59.209
+
+t=0 0
+
+a=ice-pwd:eab9dbea592a51f19c3ea22f
+
+a=ice-ufrag:fd885c20
+
+m=audio 7078 UDP/TLS/RTP/SAVPF 0 8 101
+
+a=rtpmap:101 telephone-event/8000
+
+a=setup:active
+
+a=fingerprint:SHA-256 0F:0D:77:55:BF:9D:A9:C5:A4:12:9E:0A:43:8D:6A:06:18:47:78:1D:CB:0E:37:FC:83:B0:63:5B:67:19:4B:6D
+
+a=ssrc:2932277001 cname:sip:1013@221.6.47.187:48490;transport=tcp
+
+a=candidate:1 1 UDP 2130706431 192.168.59.209 7078 typ host
+
+a=candidate:1 2 UDP 2130706430 192.168.59.209 7079 typ host
+
+a=rtcp-fb:* trr-int 5000
+
+
+sip-0.15.8.js:10299:25
+Wed Dec 04 2019 11:40:08 GMT+0800 (中国标准时间) | sip.transaction.ict | z9hG4bK9092619 | State change to "Accepted" on INVITE client transaction with id z9hG4bK9092619. sip-0.15.8.js:10303:25
+Wed Dec 04 2019 11:40:08 GMT+0800 (中国标准时间) | sip.invitecontext.sessionDescriptionHandler | tm00utmbu2jiaboc4893pj6fgjd4th | track added sip-0.15.8.js:10299:25
+Wed Dec 04 2019 11:40:08 GMT+0800 (中国标准时间) | sip.invite-dialog | INVITE dialog tm00utmbu2jiaboc4893pj6fgjd4thm4trcFUZ60cSH sending ACK request sip-0.15.8.js:10299:25
+Wed Dec 04 2019 11:40:08 GMT+0800 (中国标准时间) | sip.transport | sending WebSocket message:
+
+ACK sip:1013@121.40.242.234:5061;transport=udp SIP/2.0
+
+Via: SIP/2.0/WS 121.40.242.234;branch=z9hG4bK9868419
+
+To: <sip:1013@121.40.242.234:5061>;tag=m4trcFUZ60cSH
+
+From: "1010" <sip:1010@121.40.242.234:5061>;tag=pj6fgjd4th
+
+CSeq: 2 ACK
+
+Call-ID: tm00utmbu2jiaboc4893
+
+Max-Forwards: 70
+
+Supported: outbound
+
+User-Agent: myAwesomeApp
+
+Content-Length: 0

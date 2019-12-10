@@ -1,0 +1,455 @@
+	<!DOCTYPE html>
+	<html>
+	<head>
+	    <meta charset="utf-8">
+	    <title>sipjstest</title>
+	    <link rel="stylesheet" href="css/style.css"/>
+	</head>
+	<body>
+	<div>
+	    <input id="number" value="1000" type="text"/>
+	    <button id="startCall">Start Call</button>
+	    <button id="endCall">End Call</button>
+	    <button id="transfer">transfer</button>
+	    <button id="hold">hold</button>
+	    <button id="unhold">unhold</button>
+	    <button id="mute">mute</button>
+	    <button id="unmute">unmute</button>
+	</div>
+	<br>
+	<div>
+	    <input id="msg" value="你好" type="text"/>
+	    <button id="sendMessage">Send Message</button>
+	
+	    <audio id="ringtone" loop src="./sounds/ringtone.wav"></audio>            <!--//来电提示音-->
+	    <audio id="ringbacktone" loop src="./sounds/ringbacktone.wav"></audio>    <!--//电话呼叫后声音-->
+	    <audio id="dtmfTone" src="./sounds/dtmf.wav"></audio>
+	
+	    <video id="remoteVideo" autoplay="autoplay"></video>
+	    <video id="localVideo" autoplay="autoplay" muted="muted"></video>
+	    <!-- DTMF -->
+	    <div id="dtmf-buttons">
+	        <button onclick="sendDtmf('1');">1</button>
+	        <button onclick="sendDtmf('2');">2</button>
+	        <button onclick="sendDtmf('3');">3</button>
+	        <button onclick="sendDtmf('4');">4</button>
+	        <button onclick="sendDtmf('5');">5</button>
+	        <button onclick="sendDtmf('6');">6</button>
+	        <button onclick="sendDtmf('7');">7</button>
+	        <button onclick="sendDtmf('8');">8</button>
+	        <button onclick="sendDtmf('9');">9</button>
+	        <button onclick="sendDtmf('0');">0</button>
+	        <button onclick="sendDtmf('#');">#</button>
+	        <button onclick="sendDtmf('*');">*</button>
+	    </div>
+	</div>
+	
+	<script src="./js/sip-0.15.8.js"></script>
+	<script>
+	
+	    var extCode = "1010"; //分机号
+	    var extPass = "5566"; //分机密码
+	    var config = {
+			uri: "sip:" +extCode + '@121.40.242.234:5062',
+			// uri: '1010@121.40.242.234.xip.io:5062',
+	        authorizationUser: extCode,
+	        password: extPass,
+	        displayName: extCode,
+	        log: {
+	            builtinEnabled: true,
+	            level: 3 // log日志级别
+	        },
+	        transportOptions: {
+	           wsServers: ['ws://121.40.242.234:5066'], // ws协议
+	            //  wsServers: ['wss://121.40.242.234.xip.io:7443'], //wss协议
+	            traceSip: true  //开启sip日志,用于排查问题
+	        },
+	        // allowLegacyNotifications: true,
+			hackWssInTransport: false, // 设置为true 则注册时 transport=wss; false:transport=ws;
+			hackStripTcp: true,
+	        /**
+	         * sip.js生成的随机contact字符串 设置后会以此为后缀 可以搭配 cusContactName使用,根据自身业务进行使用
+	         *  设置前: sofia/internal/sip:admin10@df7jal23ls0d.invalid;
+	         *  设置后: sofia/internal/sip:admin10@192.168.0.253;
+	         *
+	         */
+	        hackIpInContact: true,
+	        userAgentString: "myAwesomeApp",
+	        registerOptions: {
+	            expires: 300,
+	            // registrar: 'sip:registrar.mydomain.com',
+			},
+	        /**
+	         * 此处是笔者自定义的参数,因为注册到fs时,sip.js会随机生成contact字符串,如:sofia/internal/sip:admin10@df7jal23ls0d.invalid;
+	         *  笔者自己添加了一个参数,对sip.js的源码进行了修改 ,修改后效果  sofia/internal/sip:1012@192.168.0.253 不需要的可以不理会此参数
+	         * 此处纠正问题,官方提供了一个参数[contactName],使用此参数即可,sip.js使用官方的即可
+	         * contactName:"1012"
+	         */
+	        // cusContactName: "1012"
+	    };
+	    var ua = new SIP.UA(config);
+	
+	    var sessionall;
+	    var startCall = document.getElementById('startCall');
+	    var endCall = document.getElementById('endCall');
+	    var transfer = document.getElementById('transfer');
+	    var hold = document.getElementById('hold');
+	    var unhold = document.getElementById('unhold');
+	    var sendMessage = document.getElementById('sendMessage');
+	    var mute = document.getElementById('mute');
+	    var unmute = document.getElementById('unmute');
+	
+	    var Ring={
+	        /**
+	         * 振铃
+	         */
+	        startRingTone: function () {
+	            let play = document.getElementById("ringtone").play();
+	            play.then(()=>{
+	
+	            }).catch((err)=>{
+	
+	            });
+	
+	        },
+	        /**
+	         * 停止振铃
+	         */
+	        stopRingTone: function () {
+	            document.getElementById("ringtone").pause();
+	        },
+	
+	        startRingbackTone: function () {
+	            let play = document.getElementById("ringbacktone").play();
+	            play.then(()=>{
+	
+	            }).catch((err)=>{
+	
+	
+	            });
+	        },
+	        stopRingbackTone: function () {
+	            document.getElementById("ringbacktone").pause();
+	        }
+	
+	
+	    };
+	
+	    /**
+	     *  绑定方法
+	     * @param obj 要绑定事件的元素
+	     * @param ev 绑定的事件
+	     * @param fn  绑定事件的函数
+	     */
+	    function bindEvent(obj, ev, fn) {
+	        if (obj.attachEvent) {
+	            obj.attachEvent("on" + ev, fn);
+	        }
+	        else {
+	            obj.addEventListener(ev, fn, false);
+	        }
+	    }
+	
+	    /**
+	     *  发送DTMF
+	     * @param num 按键
+	     */
+	    function sendDtmf(num) {
+	        sessionall.dtmf(num);
+	    }
+	
+	    /**
+	     * 拨打电话
+	     */
+	    bindEvent(startCall, 'click', function () {
+	
+	
+	        var number = document.getElementById("number").value;
+			//创建一个新的出站（用户代理客户端）会话
+			var modifierArray = [SIP.Web.Modifiers.stripTcpCandidates];
+	        sessionall = ua.invite(number, {
+	            sessionDescriptionHandlerOptions: {
+	                constraints: {
+	                    audio: true,
+	                    video: false
+					},
+					// iceCheckingTimeout: 1000,
+	                alwaysAcquireMediaFirst: true // 此参数是sip.js官方修复在firefox遇到的bug所设置
+				},
+	        }, modifierArray);
+	
+	        //开始嘟嘟嘟
+	        Ring.startRingbackTone();
+	
+	
+	        var remoteVideo = document.getElementById('remoteVideo');
+	        var localVideo = document.getElementById('localVideo');
+	
+	
+	        //每次收到成功的最终（200-299）响应时都会触发。
+	        sessionall.on("accepted", function (response, cause) {
+	            console.log(response);
+	            Ring.stopRingbackTone();
+	            var pc = this.sessionDescriptionHandler.peerConnection;
+	            var remoteStream;
+	
+	            if (pc.getReceivers) {
+	                remoteStream = new window.MediaStream();
+	                pc.getReceivers().forEach(function (receiver) {
+	                    var track = receiver.track;
+	                    if (track) {
+	                        remoteStream.addTrack(track);
+	                    }
+	                });
+	            } else {
+	                remoteStream = pc.getRemoteStreams()[0];
+	            }
+	            remoteVideo.srcObject = remoteStream;
+	
+	
+	            var localStream_1;
+	            if (pc.getSenders) {
+	                localStream_1 = new window.MediaStream();
+	                pc.getSenders().forEach(function (sender) {
+	                    var track = sender.track;
+	                    if (track && track.kind === "video") {
+	                        localStream_1.addTrack(track);
+	                    }
+	                });
+	            }
+	            else {
+	                localStream_1 = pc.getLocalStreams()[0];
+	            }
+	            localVideo.srcObject = localStream_1;
+	        })
+	
+	        //挂机时会触发
+	        sessionall.on("bye", function (response, cause) {
+	            Ring.stopRingbackTone();
+	            console.log(response);
+	        })
+	
+	        //请求失败时触发，无论是由于最终响应失败，还是由于超时，传输或其他错误。
+	        sessionall.on("failed", function (response, cause) {
+	            Ring.stopRingbackTone();
+	            console.log(response);
+	        })
+	
+	        /**
+	         *
+	         */
+	        sessionall.on("terminated", function (message, cause) {
+	            Ring.stopRingbackTone();
+	        })
+	
+	        /**
+	         * 对方拒绝
+	         */
+	        sessionall.on('rejected', function (response, cause) {
+	            Ring.stopRingbackTone();
+	        })
+	    })
+	
+	
+	    //挂断事件
+	    bindEvent(endCall, 'click', function () {
+	        if (!sessionall) {
+	            return;
+	        } else if (sessionall.startTime) { // Connected
+	            sessionall.bye();
+	        } else if (sessionall.reject) { // Incoming
+	            sessionall.reject();
+	        } else if (sessionall.cancel) { // Outbound
+	            sessionall.cancel();
+	        }
+	    })
+	
+	
+	
+	    //电话转移盲转
+	    bindEvent(transfer, 'click', function () {
+	        if (!sessionall) {
+	            return;
+	        }
+	        var number = document.getElementById("number").value;
+	        sessionall.refer(number, {
+	            receiveResponse: function (msg, ss) {
+	                console.error(msg);
+	                console.error(ss);
+	            }
+	        });
+	    })
+	
+	
+	    //电话保持
+	    bindEvent(hold, 'click', function () {
+	        if (!sessionall) {
+	            return;
+	        }
+	        sessionall.hold();
+	    })
+	
+	
+	    //恢复电话保持
+	    bindEvent(unhold, 'click', function () {
+	        if (!sessionall) {
+	            return;
+	        }
+	        sessionall.unhold();
+	    })
+	
+	    //发送消息
+	    bindEvent(sendMessage, 'click', function () {
+	        // Sends a new message
+	        var number = document.getElementById("number").value;
+	        var message = document.getElementById("msg").value;
+	        ua.message(number, message);
+	        // When receiving a message, prints it out
+	        ua.on('message', function (message) {
+	            console.log(message.body);
+	        });
+	    })
+	
+	    // 静音
+	    bindEvent(mute, 'click', function () {
+	        if (!sessionall) {
+	            console.warn("No session to toggle mute");
+	            return;
+	        }
+	
+	        var pc = sessionall.sessionDescriptionHandler.peerConnection;
+	        if (pc.getSenders) {
+	            pc.getSenders().forEach(function (sender) {
+	                if (sender.track) {
+	                    sender.track.enabled = false;
+	                }
+	            });
+	        } else {
+	            pc.getLocalStreams().forEach(function (stream) {
+	                stream.getAudioTracks().forEach(function (track) {
+	                    track.enabled = false;
+	                });
+	                stream.getVideoTracks().forEach(function (track) {
+	                    track.enabled = false;
+	                });
+	            });
+	        }
+	    })
+	
+	    // 解除静音
+	    bindEvent(unmute, 'click', function () {
+	        if (!sessionall) {
+	            console.warn("No session to toggle mute");
+	            return;
+	        }
+	
+	        var pc = sessionall.sessionDescriptionHandler.peerConnection;
+	        if (pc.getSenders) {
+	            pc.getSenders().forEach(function (sender) {
+	                if (sender.track) {
+	                    sender.track.enabled = true;
+	                }
+	            });
+	        } else {
+	            pc.getLocalStreams().forEach(function (stream) {
+	                stream.getAudioTracks().forEach(function (track) {
+	                    track.enabled = true;
+	                });
+	                stream.getVideoTracks().forEach(function (track) {
+	                    track.enabled = true;
+	                });
+	            });
+	        }
+	    })
+	
+	
+	    // 接受入站（用户代理服务器）会话
+	    ua.on('invite', function (session) {
+	        // 开始振铃
+	        Ring.startRingTone();
+	        var url = session.remoteIdentity.uri.toString() + "来电了，是否接听";
+	
+	        var remoteVideo = document.getElementById('remoteVideo');
+	        var localVideo = document.getElementById('localVideo');
+	
+	
+	        session.on("terminated", function (message, cause) {
+	            Ring.stopRingTone();
+	            console.error(message);
+	
+	        })
+	
+	        /**
+	         *
+	         */
+	        session.on('accepted', function (response, cause) {
+	            console.error(response);
+	            console.error(session);
+	            Ring.stopRingTone();
+	            // If there is a video track, it will attach the video and audio to the same element
+	            var pc = this.sessionDescriptionHandler.peerConnection;
+	            console.error(this.sessionDescriptionHandler);
+	            var remoteStream;
+	
+	            if (pc.getReceivers) {
+	                remoteStream = new window.MediaStream();
+	                pc.getReceivers().forEach(function (receiver) {
+	                    var track = receiver.track;
+	                    if (track) {
+	                        remoteStream.addTrack(track);
+	                    }
+	                });
+	            } else {
+	                remoteStream = pc.getRemoteStreams()[0];
+	            }
+	            remoteVideo.srcObject = remoteStream;
+	
+	
+	            var localStream_1;
+	            if (pc.getSenders) {
+	                localStream_1 = new window.MediaStream();
+	                pc.getSenders().forEach(function (sender) {
+	                    var track = sender.track;
+	                    if (track && track.kind === "video") {
+	                        localStream_1.addTrack(track);
+	                    }
+	                });
+	            }
+	            else {
+	                localStream_1 = pc.getLocalStreams()[0];
+	            }
+	            localVideo.srcObject = localStream_1;
+	            localVideo.volume = 0;
+	
+	
+	        })
+	
+	        session.on('bye', function (resp, cause) {
+	            Ring.stopRingTone();
+	        });
+	
+	        var isaccept = confirm(url);
+	        if (isaccept) {
+	            //接受来电
+	            session.accept({
+	                sessionDescriptionHandlerOptions: {
+	                    constraints: {
+	                        audio: true,
+	                        video: false
+	                    }
+	                }
+	            });
+	            sessionall = session;
+	        }
+	        else {
+	            //拒绝来电
+	            session.reject();
+	        }
+	
+	    });
+	
+	</script>
+	
+	</body>
+	</html>
+
