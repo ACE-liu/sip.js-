@@ -74,6 +74,7 @@
 	         *
 	         */
 	        hackIpInContact: true,
+			rel100: SIP.C.supported.REQUIRED,
 	        userAgentString: "myAwesomeApp",
 	        registerOptions: {
 	            expires: 300,
@@ -166,7 +167,7 @@
 	
 	        var number = document.getElementById("number").value;
 			//创建一个新的出站（用户代理客户端）会话
-			var modifierArray = [SIP.Web.Modifiers.stripTcpCandidates];
+			// var modifierArray = [SIP.Web.Modifiers.stripTcpCandidates];
 	        sessionall = ua.invite(number, {
 	            sessionDescriptionHandlerOptions: {
 	                constraints: {
@@ -176,7 +177,7 @@
 					// iceCheckingTimeout: 1000,
 	                alwaysAcquireMediaFirst: true // 此参数是sip.js官方修复在firefox遇到的bug所设置
 				},
-	        }, modifierArray);
+	        }/*, modifierArray*/);
 	
 	        //开始嘟嘟嘟
 	        Ring.startRingbackTone();

@@ -21052,13 +21052,6 @@ var Transport = /** @class */ (function (_super) {
      */
     Transport.prototype.loadConfig = function (configuration) {
         var settings = {
-            wsServers: [{
-                    scheme: "WSS",
-                    sipUri: "<sip:121.40.242.234.xip.io:5061;transport=ws;lr>",
-                    weight: 0,
-                    wsUri: "wss://121.40.242.234.xip.io:7443",
-                    isError: false
-                }],
             connectionTimeout: 5,
             maxReconnectionAttempts: 3,
             reconnectionTimeout: 4,
